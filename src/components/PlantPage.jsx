@@ -12,6 +12,18 @@ const PlantPage = () => {
     // Default value is an empty array, as this state will store an array of plant objects from the json-server
     const [plants, setPlants] = useState([]);
 
+    // Use state variable to track the user's current search term. The search term will be a sequence of characters from the user, so we use String as the default type.
+    // This state can't live in the Search component, as one of Search's siblings (PlantList) relies on the state. So we move it up one parent, from Search to this component.
+    const [search, setSearch] = useState("");
+
+    // This function uses our search term to create a copy of our plants array, with only those plants who partially match the search value. This works because of how React 
+    // re-renders components when state changes. The search state variable's value changes when the user types, which causes this function to re-evaluate with the new search term.
+    // We use the return value of this function as the value for the plants prop for the PlantList components, so PlantList always shows the right plants.
+    // Both the search term and the plant's name are lower-cased during the filter, so our search is case-insensitive.
+    const filterPlants = () => {
+        return plants.filter(plant => plant.name.toLowerCase().includes(search.toLowerCase()));
+    };
+
     // useEffect is used here with an empty dependecy array. This tells useEffect to run the callback function only ONCE, when the app loads.
     useEffect(() => {
         // Make a GET request to the /plants endpoint, the response contains an array of objects. Pass the JSON to our setPlants function to update our state.
@@ -44,8 +56,8 @@ const PlantPage = () => {
     return (
         <main>
             <NewPlantForm postPlant={postPlant} />
-            <Search />
-            <PlantList plants={plants} />
+            <Search search={search} setSearch={setSearch} />
+            <PlantList plants={filterPlants()} />
         </main>
     );
 };
