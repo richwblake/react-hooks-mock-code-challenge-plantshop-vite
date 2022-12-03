@@ -1,9 +1,13 @@
-function App() {
-  return (
-    <div className="App">
-        <h1>Plantsy 🌱</h1>
-    </div>
-  );
+import Header from './Header';
+import PlantPage from './PlantPage';
+
+const App = () => {
+    return (
+        <div className="app">
+            <Header />
+            <PlantPage />
+        </div>
+    );
 };
 
 export default App;
