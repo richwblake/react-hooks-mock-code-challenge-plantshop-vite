@@ -20,9 +20,30 @@ const PlantPage = () => {
             .then(plantJSON => setPlants(plantJSON));
     }, []);
 
+    // We pass this function down to NewPlantForm as a prop, so that NewPlantForm can in turn 
+    // give us access to the plant object created by the user. This function sends a POST request with this plant object
+    const postPlant = plant => {
+        // The 'price' property of our plant argument is of data type String. We need to change it to a float, per the examples in the README.
+        // We'll create a new object by copying our old one using the spread operator, and then only changing the price property to its Float representation. 
+        // Then, we'll post the newly formatted copy of our plant object to the server via a POST request
+        const formattedPlant = { ...plant, price: parseFloat(plant.price) };
+
+        // Create config object to tell fetch how to make a POST request. The body of our request is our plant with the price property of type Float.
+        const config = {
+            method: "POST",
+            headers: { "Content-Type": "Application/json" },
+            body: JSON.stringify(formattedPlant),
+        };
+
+        // On line 41, we create a copy of the plants state array using the spread operator, and add our newPlant to the end of the array.
+        fetch(API + '/plants', config)
+            .then(res => res.json())
+            .then(newPlant => setPlants([...plants, newPlant]));
+    };
+
     return (
         <main>
-            <NewPlantForm />
+            <NewPlantForm postPlant={postPlant} />
             <Search />
             <PlantList plants={plants} />
         </main>
