@@ -20,8 +20,9 @@ const PlantPage = () => {
     // re-renders components when state changes. The search state variable's value changes when the user types, which causes this function to re-evaluate with the new search term.
     // We use the return value of this function as the value for the plants prop for the PlantList components, so PlantList always shows the right plants.
     // Both the search term and the plant's name are lower-cased during the filter, so our search is case-insensitive.
+    // Sorting the filtered array so that when a price is editted, the order of the plants always stays consistent.
     const filterPlants = () => {
-        return plants.filter(plant => plant.name.toLowerCase().includes(search.toLowerCase()));
+        return plants.filter(plant => plant.name.toLowerCase().includes(search.toLowerCase())).sort((p1, p2) => p1.name.localeCompare(p2.name));
     };
 
     // useEffect is used here with an empty dependecy array. This tells useEffect to run the callback function only ONCE, when the app loads.
@@ -67,13 +68,39 @@ const PlantPage = () => {
                 // now we need to update our state to match.
                 setPlants(plants.filter(p => p.id !== plantId));
             });
-    }
+    };
+
+    // This function makes a PATCH request to a given plant. The argument
+    // is the newly updated plant object, ready to be sent to the server
+    const patchPlant = plant => {
+        const config = {
+            method: "PATCH",
+            headers: { "Content-Type": "Application/json" },
+            body: JSON.stringify(plant),
+        };
+
+        fetch(API + `/plants/${plant.id}`, config)
+            .then(res => res.json())
+            .then(updatedPlant => {
+                // At this point, we have successfully updated our server with our new
+                // plant value. We now need to fix our state to match. We filter the state
+                // to remove the old outdated plant, and replace it with our new
+                // updatedPlant from the server response.
+
+                // Step 1: remove the old outdated plant and add the new one in its place.
+                const updatedPlants = [...plants.filter(p => p.id !== updatedPlant.id), updatedPlant];
+                console.log(updatedPlants);
+                // Step 2: Update our plants state variable with our new updatedPlants array
+                setPlants(updatedPlants);
+                console.log("Successful updated, here's the new plant!\n", updatedPlant);
+            });
+    };
 
     return (
         <main>
             <NewPlantForm postPlant={postPlant} />
             <Search search={search} setSearch={setSearch} />
-            <PlantList deletePlant={deletePlant} plants={filterPlants()} />
+            <PlantList deletePlant={deletePlant} patchPlant={patchPlant} plants={filterPlants()} />
         </main>
     );
 };
