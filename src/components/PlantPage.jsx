@@ -38,9 +38,7 @@ const PlantPage = () => {
         // The 'price' property of our plant argument is of data type String. We need to change it to a float, per the examples in the README.
         // We'll create a new object by copying our old one using the spread operator, and then only changing the price property to its Float representation. 
         // Then, we'll post the newly formatted copy of our plant object to the server via a POST request
-        const formattedPlant = { ...plant, price: parseFloat(plant.price) };
-
-        // Create config object to tell fetch how to make a POST request. The body of our request is our plant with the price property of type Float.
+        const formattedPlant = { ...plant, price: parseFloat(plant.price) }; // Create config object to tell fetch how to make a POST request. The body of our request is our plant with the price property of type Float.
         const config = {
             method: "POST",
             headers: { "Content-Type": "Application/json" },
@@ -53,11 +51,29 @@ const PlantPage = () => {
             .then(newPlant => setPlants([...plants, newPlant]));
     };
 
+    // This function will operate simliarly to the one above, but instead,
+    // this function makes a DELETE request. Notice that the parameter for 
+    // the post is the entire plant object, but for this function it is only
+    // a plant ID. This function is passed as a prop as follows:
+    // PlantPage -> PlantList -> all PlantCards
+    const deletePlant = plantId => {
+        fetch(API + `/plants/${plantId}`, { method: "DELETE" })
+            .then(_ => {
+                console.log(`Plant with ID: ${plantId} successfully deleted. Don't forget to check the db.json file to make sure!`);
+                // Inside of this .then function, we can be sure that the
+                // delete request was successful. Only now do we want to
+                // filter our plants state array to remove the plant that
+                // was just clicked, based on its ID. We've updated the server,
+                // now we need to update our state to match.
+                setPlants(plants.filter(p => p.id !== plantId));
+            });
+    }
+
     return (
         <main>
             <NewPlantForm postPlant={postPlant} />
             <Search search={search} setSearch={setSearch} />
-            <PlantList plants={filterPlants()} />
+            <PlantList deletePlant={deletePlant} plants={filterPlants()} />
         </main>
     );
 };

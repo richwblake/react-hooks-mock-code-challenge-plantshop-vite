@@ -1,11 +1,11 @@
 import PlantCard from './PlantCard';
 
-const PlantList = ({ plants }) => {
+const PlantList = ({ deletePlant, plants }) => {
 
     // Function createPlantCards returns a new array of PlantCard componenets, created from the plants array prop. 
     const createPlantCards = () => {
         // Make sure to include a 'key' prop any time you create components in a loop like this!
-        return plants.map(plant => <PlantCard key={plant.id} plant={plant} />);
+        return plants.map(plant => <PlantCard key={plant.id} deletePlant={deletePlant} plant={plant} />);
     };
 
     return (

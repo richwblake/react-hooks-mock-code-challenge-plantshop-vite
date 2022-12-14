@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const PlantCard = ({ plant }) => {
+const PlantCard = ({ deletePlant, plant }) => {
 
     // Destructure plant prop object using object destructure syntax. This assigns 3 variables; name, image, and price, and assigns their value to the plant object's corresponding property's value.
     const { name, image, price } = plant;
@@ -26,6 +26,12 @@ const PlantCard = ({ plant }) => {
                 // If isInStock === false, only this button is rendered.
                 <button onClick={toggleIsInStock}>Out of Stock</button>
             )}
+            {/* Adding our new button that will send a DELETE request for 
+            the clicked plant. This function calls a callback function prop 
+            when clicked, and the DELETE request is handled in the parent
+            component. For styling, please see the button.delete rule in the
+            index.css file in src folder. */}
+            <button onClick={_ => deletePlant(plant.id)} className="delete">Remove Plant</button>
         </li>
     );
 

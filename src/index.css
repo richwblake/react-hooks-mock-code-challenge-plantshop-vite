@@ -18,6 +18,7 @@ h2 {
 
 button {
   padding: 0.25rem 1rem;
+  margin-right: 0.5rem;
   font-family: inherit;
   border: none;
   cursor: pointer;
@@ -26,6 +27,11 @@ button {
 button.primary {
   background-color: var(--green);
   color: white;
+}
+
+button.delete {
+  background-color: red;
+  color: white
 }
 
 .app {
